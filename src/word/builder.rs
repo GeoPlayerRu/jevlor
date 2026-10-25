@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::Write;
 
-use crate::morphem::MorphemType;
+use crate::morphem::{MorphemType, MORPHEM_ORDER};
 use crate::word::Word;
 use crate::rules::ConcatRules;
 
@@ -12,24 +12,18 @@ pub struct WordBuilder{
 
 impl WordBuilder {
     pub fn build(self) -> String {
-        let morphems_map = self.word.split_into_morphems();
+        let morphems = self.word.split_into_morphems();
 
-        let built_morphems: HashMap<MorphemType, String> = morphems_map.into_iter().map(|(kind, morphems)| {
-            let capacity = morphems.iter().map(|m| m.len()).sum();
-            let mut result = String::with_capacity(capacity);
-            for morphem in morphems {
-                result.push_str(&(*morphem));
+        let capacity: usize = morphems.values().flatten().map(|m| m.len()).sum();
+        let mut result = String::with_capacity(capacity);
+
+        for kind in &MORPHEM_ORDER {
+            if let Some(list) = morphems.get(kind) {
+                for m in list {
+                    result.push_str(m);
+                }
             }
-            (kind, result)
-        }).collect();
-
-        let morphem_order = [
-            MorphemType::Prefix, MorphemType::Core, MorphemType::Suffix,
-            MorphemType::Ending, MorphemType::Postfix
-        ];
-
-        let mut result = String::with_capacity(built_morphems.values().map(String::len).sum());
-        morphem_order.iter().filter_map(|t| built_morphems.get(t)).for_each(|morphems| result.push_str(morphems));
+        }
 
         result
     }

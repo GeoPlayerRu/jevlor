@@ -25,3 +25,9 @@ pub enum MorphemType {
     Ending,
     Postfix,
 }
+
+pub const MORPHEM_ORDER: [MorphemType; 5] = [
+    MorphemType::Prefix, MorphemType::Core, MorphemType::Suffix,
+    MorphemType::Ending, MorphemType::Postfix
+];
+
