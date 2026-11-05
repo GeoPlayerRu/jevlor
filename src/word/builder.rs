@@ -1,16 +1,24 @@
-use std::collections::HashMap;
-use std::fmt::Write;
-
-use crate::morphem::{MorphemType, MORPHEM_ORDER};
+use crate::morphem::{MORPHEM_ORDER};
 use crate::word::Word;
-use crate::rules::ConcatRules;
+use crate::rules::Language;
 
-pub struct WordBuilder{
-    word: Word,
-    rules: ConcatRules,
+/// Constructs words using language's rules.
+///
+/// If you want to build word ignoring all rules, try [[Word::to_string()]]
+pub struct WordBuilder<'a, 'b>{
+    word: &'a Word,
+    rules: &'b Language,
 }
 
-impl WordBuilder {
+impl<'a, 'b> WordBuilder<'a, 'b> {
+    // Create new builder using word and rules.
+    pub fn new(word: &'a Word, rules: &'b Language) -> Self {
+        Self {
+            word,
+            rules,
+        }
+    }
+    // Build word according to all rules.
     pub fn build(self) -> String {
         let morphems = self.word.split_into_morphems();
 
