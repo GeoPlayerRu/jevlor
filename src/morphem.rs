@@ -3,13 +3,36 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
+/// Type of morphem for building words.
+#[derive(Hash, Clone, Copy, PartialEq, Eq)]
+pub enum MorphemType {
+    /// Prefix is morphem that preceeds root. Influences words meaning.
+    Prefix,
+    /// Root is main morphem of the word. Responsible for its meaning.
+    Root,
+    /// Suffix is morphem that goes after root but before ending. Influences word type and meaning.
+    Suffix,
+    /// Ending is morphem that goes after suffix and before postfix. Influences some properties of
+    /// the word. E.g. gender, singular and plural forms.
+    Ending,
+    /// Postfix is morphem that goes after ending. Does not have definitive inlfuence.
+    Postfix,
+}
+
 /// Building block of words. Contains usually short string without special symbols.
 #[derive(Clone, PartialEq, Eq)]
-pub struct Morphem(String);
+pub struct Morphem(String, MorphemType);
 
 impl Morphem {
-    pub fn new(morphem: String) -> Self {
-        Self(morphem)
+    /// Creates morphem out of string and its type
+    pub fn new(morphem: String, kind: MorphemType) -> Self {
+        Self(morphem, kind)
+    }
+    pub fn kind(&self) -> MorphemType {
+        self.1
+    }
+    pub fn content(&self) -> String {
+        self.0.clone()
     }
 }
 
@@ -31,16 +54,6 @@ impl Display for Morphem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
-}
-
-/// Type of morphem for building words.
-#[derive(Hash, Clone, Copy, PartialEq, Eq)]
-pub enum MorphemType {
-    Prefix,
-    Root,
-    Suffix,
-    Ending,
-    Postfix,
 }
 
 /// Order of morphems for easier iteration.
