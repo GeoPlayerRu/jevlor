@@ -16,54 +16,26 @@ impl<'a, 'b> WordBuilder<'a, 'b> {
     pub fn new(word: &'a Word, rules: &'b Language) -> Self {
         Self { word, rules }
     }
+
     // Build word according to all rules.
     pub fn build(self) -> String {
-        let morphems = self.word.split_into_morphems();
+        let morphems = self.word.into_morphems_vec();
 
-        let capacity: usize = morphems.values().flatten().map(|m| m.len()).sum();
+        let capacity: usize = morphems.iter().map(|v| v.len()).sum();
         let mut result = String::with_capacity(capacity);
 
-        for kind in &MORPHEM_ORDER {
-            if let Some(list) = morphems.get(kind) {
-                let mut first = true;
-                for pairs in list.windows(2) {
-                    // Concatenate using rules. If is first then need to add two morphems at once.
-                    if first {
-                        match &self.rules.concat_rules[kind] {
-                            MorphemConcatRule::Concat => {
-                                result.push_str(&pairs[0].to_string());
-                                result.push_str(&pairs[1].to_string());
-                            }
-                            MorphemConcatRule::Bridge(bridge) => {
-                                result.push_str(&pairs[0].to_string());
-                                result.push_str(&bridge);
-                                result.push_str(&pairs[1].to_string());
-                            }
-                            MorphemConcatRule::Eliminate => {
-                                result.push_str(&pairs[0].to_string());
-                            }
-                            MorphemConcatRule::ReverseEliminate => continue,
-                        }
-                        first = false;
-                    } else {
-                        match &self.rules.concat_rules[kind] {
-                            MorphemConcatRule::Concat => {
-                                result.push_str(&pairs[1].to_string());
-                            }
-                            MorphemConcatRule::Bridge(bridge) => {
-                                result.push_str(&bridge);
-                                result.push_str(&pairs[1].to_string());
-                            }
-                            MorphemConcatRule::Eliminate => continue,
-                            MorphemConcatRule::ReverseEliminate => continue,
-                        }
-                    }
+        result.push_str(&morphems[0]);
 
-                    if let MorphemConcatRule::ReverseEliminate = &self.rules.concat_rules[kind] {
-                        result.push_str(
-                            &list.last().map(|v| v.to_string()).unwrap_or("".to_string()),
-                        );
+        for m in morphems.windows(2) {
+            if let Some(rule) = self.rules.concat_rules.get(&(m[0].kind(), m[1].kind())) {
+                match rule {
+                    MorphemConcatRule::Concat => result.push_str(&m[1]),
+                    MorphemConcatRule::Bridge(bridge) => {
+                        result.push_str(bridge);
+                        result.push_str(&m[1]);
                     }
+                    MorphemConcatRule::Eliminate => continue,
+                    //MorphemConcatRule::ReverseEliminate => todo!(),
                 }
             }
         }

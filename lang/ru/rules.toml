@@ -1,15 +1,5 @@
-[concat.prefix]
-type = "concat"
-
-[concat.root]
-type = "bridge"
-value = "о"
-
-[concat.suffix]
-type = "concat"
-
-[concat.ending]
-type = "concat"
-
-[concat.postfix]
-type = "concat"
+[[concat]]
+left="root"
+right="root"
+type="bridge"
+value="е"

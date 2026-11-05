@@ -8,7 +8,7 @@ pub mod morphem;
 
 /// Structure that contains rules, alphabet of some language.
 pub struct Language {
-    /// Rules of morhem concatenation. Right now only describes one relation between morphems of same
-    /// type, so it is homomorphic.
-    pub concat_rules: HashMap<MorphemType, MorphemConcatRule>,
+    /// Rules of morhem concatenation. Describes relation between different morphem types, so its
+    /// heteromorphic.
+    pub concat_rules: HashMap<(MorphemType, MorphemType), MorphemConcatRule>,
 }

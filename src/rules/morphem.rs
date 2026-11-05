@@ -6,6 +6,6 @@ pub enum MorphemConcatRule {
     Bridge(String),
     /// Remove the second morphem.
     Eliminate,
-    /// Remove the first morphem.
-    ReverseEliminate,
+    // / Remove the first morphem.
+    //ReverseEliminate,
 }

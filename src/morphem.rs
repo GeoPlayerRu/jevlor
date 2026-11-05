@@ -19,7 +19,7 @@ pub enum MorphemType {
     Postfix,
 }
 
-/// Building block of words. Contains usually short string without special symbols.
+/// Building block of words. Contains usually short string without special symbols and its type.
 #[derive(Clone, PartialEq, Eq)]
 pub struct Morphem(String, MorphemType);
 
@@ -28,9 +28,11 @@ impl Morphem {
     pub fn new(morphem: String, kind: MorphemType) -> Self {
         Self(morphem, kind)
     }
+    /// Returns type of morphem.
     pub fn kind(&self) -> MorphemType {
         self.1
     }
+    /// Returns inner string.
     pub fn content(&self) -> String {
         self.0.clone()
     }
