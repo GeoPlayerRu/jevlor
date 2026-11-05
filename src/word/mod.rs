@@ -44,22 +44,36 @@ impl Word {
             prefixes: map.remove(&MorphemType::Prefix).unwrap_or(Vec::new()),
             roots: cores,
             suffixes: map.remove(&MorphemType::Suffix).unwrap_or(Vec::new()),
-            ending: map.remove(&MorphemType::Ending).map(|v| v.into_iter().next()).flatten(),
-            postfix: map.remove(&MorphemType::Postfix).map(|v| v.into_iter().next()).flatten(),
+            ending: map
+                .remove(&MorphemType::Ending)
+                .map(|v| v.into_iter().next())
+                .flatten(),
+            postfix: map
+                .remove(&MorphemType::Postfix)
+                .map(|v| v.into_iter().next())
+                .flatten(),
         })
     }
 
     /// Splits word into hasmap of morphem types and morphems. Endings and postfixes are returned as
     /// vector with zero or one element.
     pub fn split_into_morphems(&self) -> HashMap<MorphemType, Vec<Morphem>> {
-        [(MorphemType::Prefix, self.prefixes.clone()),
-                (MorphemType::Root, self.roots.clone()),
-                (MorphemType::Suffix, self.suffixes.clone()),
-                (MorphemType::Ending, self.ending.clone().map(|v| vec![v]).unwrap_or(vec![])),
-                (MorphemType::Postfix, self.postfix.clone().map(|v| vec![v]).unwrap_or(vec![])),
-        ].into_iter().collect()
+        [
+            (MorphemType::Prefix, self.prefixes.clone()),
+            (MorphemType::Root, self.roots.clone()),
+            (MorphemType::Suffix, self.suffixes.clone()),
+            (
+                MorphemType::Ending,
+                self.ending.clone().map(|v| vec![v]).unwrap_or(vec![]),
+            ),
+            (
+                MorphemType::Postfix,
+                self.postfix.clone().map(|v| vec![v]).unwrap_or(vec![]),
+            ),
+        ]
+        .into_iter()
+        .collect()
     }
-
 }
 
 impl Display for Word {

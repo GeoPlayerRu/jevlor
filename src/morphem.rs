@@ -1,7 +1,10 @@
-use std::{fmt::Display, ops::{Deref, DerefMut}};
+use std::{
+    fmt::Display,
+    ops::{Deref, DerefMut},
+};
 
 /// Building block of words. Contains usually short string without special symbols.
-#[derive(Clone,PartialEq,Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Morphem(String);
 
 impl Morphem {
@@ -31,7 +34,7 @@ impl Display for Morphem {
 }
 
 /// Type of morphem for building words.
-#[derive(Hash,Clone,Copy,PartialEq,Eq)]
+#[derive(Hash, Clone, Copy, PartialEq, Eq)]
 pub enum MorphemType {
     Prefix,
     Root,
@@ -42,7 +45,9 @@ pub enum MorphemType {
 
 /// Order of morphems for easier iteration.
 pub const MORPHEM_ORDER: [MorphemType; 5] = [
-    MorphemType::Prefix, MorphemType::Root, MorphemType::Suffix,
-    MorphemType::Ending, MorphemType::Postfix
+    MorphemType::Prefix,
+    MorphemType::Root,
+    MorphemType::Suffix,
+    MorphemType::Ending,
+    MorphemType::Postfix,
 ];
-
