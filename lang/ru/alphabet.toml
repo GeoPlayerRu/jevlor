@@ -1,0 +1,5 @@
+[alphabet]
+uppercase_vowels 		= "АЕЁИОУЫЭЮЯ"
+lowercase_vowels 		= "аеёиоуыэюя"
+uppercase_consonants 	= "БВГДЖЗЙКЛМНПРСТФХЦЧШЩЪЬ"
+lowercase_consonants 	= "бвгджзйклмнпрстфхцчшщъь"
