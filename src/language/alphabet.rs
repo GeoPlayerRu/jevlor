@@ -1,4 +1,9 @@
+use crate::serde::alphabet::AlphabetPrototype;
+use serde::{Deserialize, Serialize};
+
 /// Structure that contains information about letters in language.
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(from = "AlphabetPrototype")]
 pub struct Alphabet {
     /// All leters that alphabet can provide.
     pub letters: Vec<char>,
@@ -31,5 +36,15 @@ impl Alphabet {
     /// Get consonants as vec of [UlPair].
     pub fn get_consonants(&self) -> Vec<char> {
         self.consonants.iter().copied().collect()
+    }
+}
+
+impl From<AlphabetPrototype> for Alphabet {
+    fn from(value: AlphabetPrototype) -> Self {
+        Self {
+            letters: value.letters.chars().collect(),
+            vowels: value.vowels.chars().collect(),
+            consonants: value.consonants.chars().collect(),
+        }
     }
 }

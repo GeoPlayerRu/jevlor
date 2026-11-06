@@ -1,4 +1,7 @@
-use crate::{morphem::{Morphem, MorphemType}, rules::language::MorphemStatistics};
+use crate::{
+    language::statistics::MorphemStatistics,
+    morphem::{Morphem, MorphemType},
+};
 use rand::{RngExt, SeedableRng, rng, rngs::ThreadRng, seq::IndexedRandom};
 
 pub struct StatisticalMorphemGenerator<'a, R: RngExt> {
@@ -37,24 +40,37 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
     type Item = Morphem;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let len: u8 = self.rng.random_range(self.stats.lenghts.start..=self.stats.lenghts.end);
+        let len: u8 = self
+            .rng
+            .random_range(self.stats.lenghts.start..=self.stats.lenghts.end);
 
         let mut result_string = String::new();
         result_string.reserve(len as usize);
 
         let (vowel_chance, _) = self.stats.chances();
-        
+
         for _ in 0..len {
             if self.rng.random_bool(vowel_chance) {
-                let vowel = self.stats.lang.alphabet.get_vowels().choose(&mut self.rng).map(|p| p.lowercase())?;
+                let vowel = self
+                    .stats
+                    .lang
+                    .alphabet
+                    .get_vowels()
+                    .choose(&mut self.rng)
+                    .copied()?;
                 result_string.push(vowel);
             } else {
-                let consonant = self.stats.lang.alphabet.get_consonants().choose(&mut self.rng).map(|p| p.lowercase())?;
+                let consonant = self
+                    .stats
+                    .lang
+                    .alphabet
+                    .get_consonants()
+                    .choose(&mut self.rng)
+                    .copied()?;
                 result_string.push(consonant);
             }
         }
 
         Some(Morphem::new(result_string, self.morphem))
     }
-
 }

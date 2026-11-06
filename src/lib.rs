@@ -10,3 +10,6 @@ pub mod generator;
 /// Contains structures that describe and abstract different languages for the proccess of
 /// generation.
 pub mod language;
+
+/// Contains modules and structures that are used for deserializing [language] structures.
+pub mod serde;

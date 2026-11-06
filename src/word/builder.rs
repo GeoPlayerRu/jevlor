@@ -32,7 +32,7 @@ impl<'a, 'b> WordBuilder<'a, 'b> {
                 .concat_rules
                 .get(&(m[0].kind(), m[1].kind()))
             {
-                match rule {
+                match &rule[0] {
                     MorphemConcatRule::Concat => result.push_str(&m[1]),
                     MorphemConcatRule::Bridge(bridge) => {
                         result.push_str(bridge);
