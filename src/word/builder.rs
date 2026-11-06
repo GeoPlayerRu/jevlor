@@ -1,5 +1,5 @@
-use crate::rules::language::Language;
-use crate::rules::morphem::MorphemConcatRule;
+use crate::language::Language;
+use crate::language::morphem::MorphemConcatRule;
 use crate::word::Word;
 
 /// Constructs words using language's rules.
@@ -26,7 +26,12 @@ impl<'a, 'b> WordBuilder<'a, 'b> {
         result.push_str(&morphems[0]);
 
         for m in morphems.windows(2) {
-            if let Some(rule) = self.rules.morphem_rules.concat_rules.get(&(m[0].kind(), m[1].kind())) {
+            if let Some(rule) = self
+                .rules
+                .morphem_rules
+                .concat_rules
+                .get(&(m[0].kind(), m[1].kind()))
+            {
                 match rule {
                     MorphemConcatRule::Concat => result.push_str(&m[1]),
                     MorphemConcatRule::Bridge(bridge) => {

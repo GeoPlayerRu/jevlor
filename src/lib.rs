@@ -9,4 +9,4 @@ pub mod generator;
 
 /// Contains structures that describe and abstract different languages for the proccess of
 /// generation.
-pub mod rules;
+pub mod language;
