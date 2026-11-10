@@ -4,6 +4,7 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Type of morphem for building words.
 #[derive(Hash, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Debug)]
@@ -20,8 +21,21 @@ pub enum MorphemType {
     Ending,
     /// Postfix is morphem that goes after ending. Does not have definitive inlfuence.
     Postfix,
+    /// Type for signalizing all morphem types,
+    All,
 }
 
+/// Fills provided dictionary with value at [MorphemType::All]
+pub fn fill_with_all<T: Clone>(mut map: HashMap<MorphemType, T>) -> HashMap<MorphemType, T> {
+    if map.contains_key(&MorphemType::All) {
+        for morphem in MORPHEM_ORDER {
+            let value = map[&MorphemType::All].clone();
+            map.entry(morphem).or_insert(value);
+        }
+        return map;
+    }
+    map
+}
 /// Building block of words. Contains usually short string without special symbols and its type.
 #[derive(Clone, PartialEq, Eq)]
 pub struct Morphem(String, MorphemType);

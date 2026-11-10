@@ -1,19 +1,22 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use crate::language::Language;
 use crate::morphem::MorphemType;
+use crate::{language::Language, morphem::fill_with_all};
+
+use serde::{Deserialize, Serialize};
+
+use crate::serde::statistics::LanguageStatisticsPrototype;
 
 /// Structure that contains statistics about language
+#[derive(Serialize, Deserialize)]
+#[serde(from = "LanguageStatisticsPrototype")]
 pub struct LanguageStatistics {
     /// Grammatic and morphemic rules of the language.
-    pub rules: Language,
+    pub rules: Option<Language>,
 
-    /// Hashmap of weights of vowels per morphem.
-    pub vowels_per_morphem: HashMap<MorphemType, u8>,
-
-    /// Hashmap of weight of consonants per morphem.
-    pub consonants_per_morphem: HashMap<MorphemType, u8>,
+    /// Hashmap of weights of letters per morphem.
+    pub morphem_chars_probability: HashMap<MorphemType, HashMap<char, f64>>,
 
     /// Hashmap of size ranges of morphems.
     pub lenghts_per_morphem: HashMap<MorphemType, Range<u8>>,
@@ -22,13 +25,10 @@ pub struct LanguageStatistics {
 /// Slice of [LanguageStatistics] for [MorphemType].
 pub struct MorphemStatistics<'a> {
     /// Grammatic and morphemic rules of the language.
-    pub lang: &'a Language,
+    pub lang: Option<&'a Language>,
 
-    /// Hashmap of weights of vowels per morphem.
-    pub vowels: u8,
-
-    /// Hashmap of weight of consonants per morphem.
-    pub consonants: u8,
+    /// Hashmap of weights of letters
+    pub weights: HashMap<char, f64>,
 
     /// Hashmap of size ranges of morphems.
     pub lenghts: Range<u8>,
@@ -36,33 +36,35 @@ pub struct MorphemStatistics<'a> {
 
 impl LanguageStatistics {
     /// Get chances of vowels and consonants per morphem.
-    pub fn chances(&self, morphem: &MorphemType) -> (f64, f64) {
-        let vowels = self.vowels_per_morphem[morphem];
-        let consonants = self.consonants_per_morphem[morphem];
-        let amount = (vowels + consonants) as f64;
-
-        ((vowels as f64) / amount, (consonants as f64) / amount)
+    pub fn chances(&self, morphem: &MorphemType) -> HashMap<char, f64> {
+        self.morphem_chars_probability
+            .get(morphem)
+            .cloned()
+            .unwrap()
     }
 
     /// Get [MorphemStatistics] for [MorhemType]
     pub fn morphem<'a>(&'a self, morphem: &MorphemType) -> MorphemStatistics<'a> {
         MorphemStatistics {
-            lang: &self.rules,
-            vowels: self.vowels_per_morphem[morphem],
-            consonants: self.consonants_per_morphem[morphem],
+            lang: self.rules.as_ref(),
+            weights: self.chances(morphem),
             lenghts: self.lenghts_per_morphem[morphem].clone(),
         }
     }
 }
 
-impl<'a> MorphemStatistics<'a> {
-    /// Get chances of vowels and consonants per morphem.
-    pub fn chances(&self) -> (f64, f64) {
-        let amount = (self.vowels + self.consonants) as f64;
-
-        (
-            (self.vowels as f64) / amount,
-            (self.consonants as f64) / amount,
-        )
+impl From<LanguageStatisticsPrototype> for LanguageStatistics {
+    fn from(value: LanguageStatisticsPrototype) -> Self {
+        Self {
+            rules: value.rules,
+            morphem_chars_probability: fill_with_all(
+                value
+                    .letters
+                    .into_iter()
+                    .map(|(mtype, stats)| (mtype, stats.hashmap_repr()))
+                    .collect(),
+            ),
+            lenghts_per_morphem: fill_with_all(value.lenghts),
+        }
     }
 }

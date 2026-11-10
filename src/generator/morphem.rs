@@ -47,28 +47,14 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
         let mut result_string = String::new();
         result_string.reserve(len as usize);
 
-        let (vowel_chance, _) = self.stats.chances();
+        let weights: Vec<(char, f64)> = self.stats.weights.iter().map(|(k, v)| (*k, *v)).collect();
 
         for _ in 0..len {
-            if self.rng.random_bool(vowel_chance) {
-                let vowel = self
-                    .stats
-                    .lang
-                    .alphabet
-                    .get_vowels()
-                    .choose(&mut self.rng)
-                    .copied()?;
-                result_string.push(vowel);
-            } else {
-                let consonant = self
-                    .stats
-                    .lang
-                    .alphabet
-                    .get_consonants()
-                    .choose(&mut self.rng)
-                    .copied()?;
-                result_string.push(consonant);
-            }
+            let Ok(chosen_char) = weights.choose_weighted(&mut self.rng, |val| val.1) else {
+                break;
+            };
+
+            result_string.push(chosen_char.0);
         }
 
         Some(Morphem::new(result_string, self.morphem))

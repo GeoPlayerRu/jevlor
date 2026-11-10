@@ -10,7 +10,7 @@ pub mod morphem;
 pub mod statistics;
 
 /// Structure that contains rules, alphabet of some language.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(from = "LanguagePrototype")]
 pub struct Language {
     /// Information about letters.
