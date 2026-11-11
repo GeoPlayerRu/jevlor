@@ -29,9 +29,9 @@ fn print_notice() {
     println!(
         "
     jevlor  Copyright (C) 2026  Fedor Veselov
-    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This program comes with ABSOLUTELY NO WARRANTY.
     This is free software, and you are welcome to redistribute it
-    under certain conditions; type `show c' for details.
+    under certain conditions.
     "
     );
 }
