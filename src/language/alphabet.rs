@@ -2,7 +2,7 @@ use crate::serde::alphabet::AlphabetPrototype;
 use serde::{Deserialize, Serialize};
 
 /// Structure that contains information about letters in language.
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(from = "AlphabetPrototype")]
 pub struct Alphabet {
     /// All leters that alphabet can provide.

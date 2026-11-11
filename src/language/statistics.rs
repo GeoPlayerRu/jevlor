@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::serde::statistics::LanguageStatisticsPrototype;
 
 /// Structure that contains statistics about language
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(from = "LanguageStatisticsPrototype")]
 pub struct LanguageStatistics {
     /// Grammatic and morphemic rules of the language.

@@ -6,7 +6,7 @@ use crate::morphem::MorphemType;
 use crate::serde::language::MorphemicRulesPrototype;
 
 /// Describes relation between two morphems.
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub enum MorphemConcatRule {
     /// Concatenate them.
     Concat,
@@ -19,7 +19,7 @@ pub enum MorphemConcatRule {
 }
 
 /// Structure that contains rules to construct morphems
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Debug)]
 pub struct MorphemicRules {
     /// Rules of morhem concatenation. Describes relation between different morphem types, so its
     /// heteromorphic.
