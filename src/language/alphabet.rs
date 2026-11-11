@@ -37,6 +37,11 @@ impl Alphabet {
     pub fn get_consonants(&self) -> Vec<char> {
         self.consonants.iter().copied().collect()
     }
+
+    /// Checks whether alphabet considers char a vowel.
+    pub fn is_vowel(&self, ch: char) -> bool {
+        self.vowels.contains(&ch)
+    }
 }
 
 impl From<AlphabetPrototype> for Alphabet {
