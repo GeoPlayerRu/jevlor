@@ -42,6 +42,11 @@ impl Alphabet {
     pub fn is_vowel(&self, ch: char) -> bool {
         self.vowels.contains(&ch)
     }
+
+    /// Checks whether alphabet considers char a consonant.
+    pub fn is_consonant(&self, ch: char) -> bool {
+        self.consonants.contains(&ch)
+    }
 }
 
 impl From<AlphabetPrototype> for Alphabet {
