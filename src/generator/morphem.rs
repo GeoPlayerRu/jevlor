@@ -18,6 +18,7 @@
 //
 
 use crate::generator::syllable::SyllableGenerator;
+use crate::language::Language;
 use crate::{
     language::statistics::MorphemStatistics,
     morphem::{Morphem, MorphemType},
@@ -25,15 +26,17 @@ use crate::{
 use rand::{RngExt, SeedableRng, rng, rngs::ThreadRng};
 
 pub struct StatisticalMorphemGenerator<'a, R: RngExt> {
-    stats: MorphemStatistics<'a>,
+    stats: MorphemStatistics,
+    lang: &'a Language,
     rng: R,
     morphem: MorphemType,
 }
 
 impl<'a> StatisticalMorphemGenerator<'a, ThreadRng> {
-    pub fn new(stats: MorphemStatistics<'a>, morphem: MorphemType) -> Self {
+    pub fn new(stats: MorphemStatistics, morphem: MorphemType, lang: &'a Language) -> Self {
         Self {
             stats,
+            lang,
             rng: rng(),
             morphem,
         }
@@ -41,9 +44,15 @@ impl<'a> StatisticalMorphemGenerator<'a, ThreadRng> {
 }
 
 impl<'a, R: RngExt> StatisticalMorphemGenerator<'a, R> {
-    pub fn create(stats: MorphemStatistics<'a>, rng: R, morphem: MorphemType) -> Self {
+    pub fn create(
+        stats: MorphemStatistics,
+        lang: &'a Language,
+        rng: R,
+        morphem: MorphemType,
+    ) -> Self {
         Self {
             stats,
+            lang,
             rng,
             morphem,
         }
@@ -68,7 +77,7 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
         let mut result_string = String::new();
         result_string.reserve(len as usize);
 
-        let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng);
+        let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
         sylgen.restrict_len((len - result_string.len()) as u8);
         while result_string.len() < len {
             result_string.push_str(&sylgen.next().unwrap());

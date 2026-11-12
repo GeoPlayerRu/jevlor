@@ -17,7 +17,9 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 use crate::{
-    language::{Alphabet, Language, MorphemicRules, morphem::MorphemConcatRule},
+    language::{
+        Alphabet, Language, MorphemicRules, morphem::MorphemConcatRule, statistics::Statistics,
+    },
     morphem::MorphemType,
 };
 use serde::{Deserialize, Serialize};
@@ -25,6 +27,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(into = "Language")]
 pub(crate) struct LanguagePrototype {
+    pub stats: Option<Statistics>,
     pub alphabet: Option<Alphabet>,
     #[serde(rename = "concat")]
     pub concat_rules: MorphemicRulesPrototype,

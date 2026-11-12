@@ -20,19 +20,16 @@ use std::collections::HashMap;
 use std::ops::Range;
 
 use crate::morphem::MorphemType;
-use crate::{language::Language, morphem::fill_with_all};
+use crate::morphem::fill_with_all;
 
 use serde::{Deserialize, Serialize};
 
 use crate::serde::statistics::LanguageStatisticsPrototype;
 
 /// Structure that contains statistics about language
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(from = "LanguageStatisticsPrototype")]
-pub struct LanguageStatistics {
-    /// Grammatic and morphemic rules of the language.
-    pub rules: Option<Language>,
-
+pub struct Statistics {
     /// Hashmap of weights of letters per morphem.
     pub morphem_chars_probability: HashMap<MorphemType, HashMap<char, f64>>,
 
@@ -41,10 +38,7 @@ pub struct LanguageStatistics {
 }
 
 /// Slice of [LanguageStatistics] for [MorphemType].
-pub struct MorphemStatistics<'a> {
-    /// Grammatic and morphemic rules of the language.
-    pub lang: Option<&'a Language>,
-
+pub struct MorphemStatistics {
     /// Hashmap of weights of letters
     pub weights: HashMap<char, f64>,
 
@@ -52,7 +46,7 @@ pub struct MorphemStatistics<'a> {
     pub lenghts: Range<u8>,
 }
 
-impl LanguageStatistics {
+impl Statistics {
     /// Get chances of vowels and consonants per morphem.
     pub fn chances(&self, morphem: &MorphemType) -> HashMap<char, f64> {
         self.morphem_chars_probability
@@ -62,19 +56,17 @@ impl LanguageStatistics {
     }
 
     /// Get [MorphemStatistics] for [MorhemType]
-    pub fn morphem<'a>(&'a self, morphem: &MorphemType) -> MorphemStatistics<'a> {
+    pub fn morphem(&self, morphem: &MorphemType) -> MorphemStatistics {
         MorphemStatistics {
-            lang: self.rules.as_ref(),
             weights: self.chances(morphem),
             lenghts: self.lenghts_per_morphem[morphem].clone(),
         }
     }
 }
 
-impl From<LanguageStatisticsPrototype> for LanguageStatistics {
+impl From<LanguageStatisticsPrototype> for Statistics {
     fn from(value: LanguageStatisticsPrototype) -> Self {
         Self {
-            rules: value.rules,
             morphem_chars_probability: fill_with_all(
                 value
                     .letters

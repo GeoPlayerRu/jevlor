@@ -16,7 +16,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-use crate::language::statistics::MorphemStatistics;
+use crate::language::{Language, statistics::MorphemStatistics};
 use rand::{RngExt, seq::IndexedRandom};
 use std::collections::VecDeque;
 
@@ -25,16 +25,18 @@ const MAX_CONSONANTS_PER_SIDE: u8 = 4;
 
 /// Iterator that returns random syllables
 pub struct SyllableGenerator<'a, 'b, R: RngExt> {
-    stats: &'a MorphemStatistics<'b>,
+    stats: &'a MorphemStatistics,
+    lang: &'b Language,
     rng: &'a mut R,
     restricted_len: Option<u8>,
 }
 
 impl<'a, 'b, R: RngExt> SyllableGenerator<'a, 'b, R> {
     /// Create new syllable generator out of references to stats and random number generator
-    pub fn new(stats: &'a MorphemStatistics<'b>, rng: &'a mut R) -> Self {
+    pub fn new(stats: &'a MorphemStatistics, rng: &'a mut R, lang: &'b Language) -> Self {
         Self {
             stats,
+            lang,
             rng,
             restricted_len: None,
         }
@@ -59,14 +61,7 @@ impl<'a, 'b, R: RngExt> Iterator for SyllableGenerator<'a, 'b, R> {
                 .stats
                 .weights
                 .iter()
-                .filter_map(|(ch, v)| {
-                    self.stats
-                        .lang
-                        .unwrap()
-                        .alphabet
-                        .is_vowel(*ch)
-                        .then(|| (*ch, *v))
-                })
+                .filter_map(|(ch, v)| self.lang.alphabet.is_vowel(*ch).then(|| (*ch, *v)))
                 .collect();
 
             let mut result_dec = VecDeque::new();
@@ -85,14 +80,7 @@ impl<'a, 'b, R: RngExt> Iterator for SyllableGenerator<'a, 'b, R> {
             .stats
             .weights
             .iter()
-            .filter_map(|(k, v)| {
-                self.stats
-                    .lang
-                    .unwrap()
-                    .alphabet
-                    .is_consonant(*k)
-                    .then(|| (*k, *v))
-            })
+            .filter_map(|(k, v)| self.lang.alphabet.is_consonant(*k).then(|| (*k, *v)))
             .collect();
 
         // Add consonants at the beginning

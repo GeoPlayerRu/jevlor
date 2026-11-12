@@ -16,8 +16,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-use crate::language::Language;
-use crate::language::statistics::LanguageStatistics;
+use crate::language::statistics::Statistics;
 use crate::morphem::MorphemType;
 
 use std::{collections::HashMap, ops::Range};
@@ -25,9 +24,8 @@ use std::{collections::HashMap, ops::Range};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
-#[serde(into = "LanguageStatistics")]
+#[serde(into = "Statistics")]
 pub(crate) struct LanguageStatisticsPrototype {
-    pub rules: Option<Language>,
     pub letters: HashMap<MorphemType, LetterStatistics>,
     pub lenghts: HashMap<MorphemType, Range<u8>>,
 }

@@ -17,7 +17,7 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 pub use crate::language::{alphabet::Alphabet, morphem::MorphemicRules};
-use crate::serde::language::LanguagePrototype;
+use crate::{language::statistics::Statistics, serde::language::LanguagePrototype};
 use serde::{Deserialize, Serialize};
 
 /// Contains structures that describe letters and information about them.
@@ -35,13 +35,16 @@ pub struct Language {
     pub alphabet: Alphabet,
     /// Information about morphems.
     pub morphem_rules: MorphemicRules,
+    /// Information about statistics
+    pub stats: Statistics,
 }
 
 impl From<LanguagePrototype> for Language {
     fn from(value: LanguagePrototype) -> Self {
         Self {
-            alphabet: value.alphabet.unwrap_or(Alphabet::new(vec![' '])),
+            alphabet: value.alphabet.unwrap_or_default(),
             morphem_rules: value.concat_rules.into(),
+            stats: value.stats.unwrap_or_default(),
         }
     }
 }

@@ -17,4 +17,4 @@
 - [ ] Remaking existing words by taking syllables at the beginning and the end.
 ## Abstractions
 - [ ] Ultimately this must generate words in any language with words
-- [ ] Shuffle structs a bit to make things easier and evade using Option
+- [x] Shuffle structs a bit to make things easier and evade using Option
