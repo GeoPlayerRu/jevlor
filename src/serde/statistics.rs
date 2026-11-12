@@ -19,15 +19,15 @@
 use crate::language::statistics::Statistics;
 use crate::morphem::MorphemType;
 
-use std::{collections::HashMap, ops::Range};
+use std::{collections::BTreeMap, ops::Range};
 
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(into = "Statistics")]
 pub(crate) struct LanguageStatisticsPrototype {
-    pub letters: HashMap<MorphemType, LetterStatistics>,
-    pub lenghts: HashMap<MorphemType, Range<u8>>,
+    pub letters: BTreeMap<MorphemType, LetterStatistics>,
+    pub lenghts: BTreeMap<MorphemType, Range<u8>>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -41,12 +41,12 @@ pub(crate) enum LetterStatistics {
 }
 
 impl LetterStatistics {
-    pub fn hashmap_repr(self) -> HashMap<char, f64> {
+    pub fn hashmap_repr(self) -> BTreeMap<char, f64> {
         match self {
             LetterStatistics::Ranked { value: ranks } => {
                 let amount = ranks.len();
                 let probabilities_sum = ((amount + 1) * amount / 2) as f64;
-                let weights: HashMap<char, f64> = ranks
+                let weights: BTreeMap<char, f64> = ranks
                     .chars()
                     .enumerate()
                     .map(|(i, v)| (v, 1.0 - ((i + 1) as f64) / probabilities_sum))

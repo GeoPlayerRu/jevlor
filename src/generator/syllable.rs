@@ -24,6 +24,7 @@ const NEXT_CONSONANT_PROBABILITY: f64 = 0.5;
 const MAX_CONSONANTS_PER_SIDE: u8 = 4;
 
 /// Iterator that returns random syllables
+#[derive(Debug)]
 pub struct SyllableGenerator<'a, 'b, R: RngExt> {
     stats: &'a MorphemStatistics,
     lang: &'b Language,

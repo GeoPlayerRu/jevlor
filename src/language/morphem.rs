@@ -16,7 +16,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use serde::Serialize;
 
@@ -41,13 +41,13 @@ pub enum MorphemConcatRule {
 pub struct MorphemicRules {
     /// Rules of morhem concatenation. Describes relation between different morphem types, so its
     /// heteromorphic.
-    pub concat_rules: HashMap<(MorphemType, MorphemType), Vec<MorphemConcatRule>>,
+    pub concat_rules: BTreeMap<(MorphemType, MorphemType), Vec<MorphemConcatRule>>,
 }
 
 impl From<MorphemicRulesPrototype> for MorphemicRules {
     fn from(value: MorphemicRulesPrototype) -> Self {
         let mut result: Self = Self {
-            concat_rules: HashMap::new(),
+            concat_rules: BTreeMap::new(),
         };
         for rule in value.0 {
             result

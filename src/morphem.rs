@@ -17,15 +17,13 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 use std::{
-    fmt::Display,
-    ops::{Deref, DerefMut},
+    collections::BTreeMap, fmt::Display, ops::{Deref, DerefMut}
 };
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 /// Type of morphem for building words.
-#[derive(Hash, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Debug)]
+#[derive(Hash, PartialOrd, Ord, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum MorphemType {
     /// Prefix is morphem that preceeds root. Influences words meaning.
@@ -44,7 +42,7 @@ pub enum MorphemType {
 }
 
 /// Fills provided dictionary with value at [MorphemType::All]
-pub fn fill_with_all<T: Clone>(mut map: HashMap<MorphemType, T>) -> HashMap<MorphemType, T> {
+pub fn fill_with_all<T: Clone>(mut map: BTreeMap<MorphemType, T>) -> BTreeMap<MorphemType, T> {
     if map.contains_key(&MorphemType::All) {
         for morphem in MORPHEM_ORDER {
             let value = map[&MorphemType::All].clone();

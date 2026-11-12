@@ -16,7 +16,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::ops::Range;
 
 use crate::morphem::MorphemType;
@@ -31,16 +31,17 @@ use crate::serde::statistics::LanguageStatisticsPrototype;
 #[serde(from = "LanguageStatisticsPrototype")]
 pub struct Statistics {
     /// Hashmap of weights of letters per morphem.
-    pub morphem_chars_probability: HashMap<MorphemType, HashMap<char, f64>>,
+    pub morphem_chars_probability: BTreeMap<MorphemType, BTreeMap<char, f64>>,
 
     /// Hashmap of size ranges of morphems.
-    pub lenghts_per_morphem: HashMap<MorphemType, Range<u8>>,
+    pub lenghts_per_morphem: BTreeMap<MorphemType, Range<u8>>,
 }
 
 /// Slice of [LanguageStatistics] for [MorphemType].
+#[derive(Debug)]
 pub struct MorphemStatistics {
     /// Hashmap of weights of letters
-    pub weights: HashMap<char, f64>,
+    pub weights: BTreeMap<char, f64>,
 
     /// Hashmap of size ranges of morphems.
     pub lenghts: Range<u8>,
@@ -48,7 +49,7 @@ pub struct MorphemStatistics {
 
 impl Statistics {
     /// Get chances of vowels and consonants per morphem.
-    pub fn chances(&self, morphem: &MorphemType) -> HashMap<char, f64> {
+    pub fn chances(&self, morphem: &MorphemType) -> BTreeMap<char, f64> {
         self.morphem_chars_probability
             .get(morphem)
             .cloned()

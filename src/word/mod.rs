@@ -17,7 +17,7 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-use std::{collections::HashMap, fmt::Display};
+use std::{collections::BTreeMap, fmt::Display};
 
 use crate::morphem::{Morphem, MorphemType};
 
@@ -67,8 +67,8 @@ impl Word {
 
     /// Tries to construct word out of morphems mapped to their type. Return [WordWithLabel::Invalid] if there are no
     /// roots.
-    pub fn from_morphem_hashmap(map: HashMap<MorphemType, Vec<String>>) -> WordWithLabel {
-        let mut morphem_map: HashMap<MorphemType, Vec<Morphem>> = map
+    pub fn from_morphem_hashmap(map: BTreeMap<MorphemType, Vec<String>>) -> WordWithLabel {
+        let mut morphem_map: BTreeMap<MorphemType, Vec<Morphem>> = map
             .into_iter()
             .map(|(k, v)| {
                 (
@@ -136,7 +136,7 @@ impl Word {
 
     /// Splits word into hashmap of morphem types and morphems. Endings and postfixes are returned as
     /// vector with zero or one element.
-    pub fn into_morphems_hashmap(&self) -> HashMap<MorphemType, Vec<String>> {
+    pub fn into_morphems_hashmap(&self) -> BTreeMap<MorphemType, Vec<String>> {
         [
             (
                 MorphemType::Prefix,
