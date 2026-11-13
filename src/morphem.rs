@@ -17,7 +17,9 @@
 //    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 use std::{
-    collections::BTreeMap, fmt::Display, ops::{Deref, DerefMut}
+    collections::BTreeMap,
+    fmt::Display,
+    ops::{Deref, DerefMut},
 };
 
 use serde::{Deserialize, Serialize};
