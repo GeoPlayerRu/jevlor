@@ -35,6 +35,8 @@ pub struct Statistics {
 
     /// Hashmap of size ranges of morphems.
     pub lenghts_per_morphem: BTreeMap<MorphemType, Range<u8>>,
+
+    pub morhem_data: MorphemData,
 }
 
 /// Slice of [LanguageStatistics] for [MorphemType].
@@ -45,6 +47,11 @@ pub struct MorphemStatistics {
 
     /// Hashmap of size ranges of morphems.
     pub lenghts: Range<u8>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
+pub struct MorphemData {
+    pub probabilities: BTreeMap<MorphemType, f64>,
 }
 
 impl Statistics {
@@ -76,6 +83,7 @@ impl From<LanguageStatisticsPrototype> for Statistics {
                     .collect(),
             ),
             lenghts_per_morphem: fill_with_all(value.lenghts),
+            morhem_data: value.morphems,
         }
     }
 }

@@ -23,6 +23,8 @@ use jevlor::serde::load_language;
 
 use std::path::Path;
 
+pub mod commands;
+
 // Separate function for easier migration
 fn print_notice() {
     eprintln!(

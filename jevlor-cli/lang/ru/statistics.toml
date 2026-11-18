@@ -2,22 +2,17 @@
 type="ranked"
 value="оеатсинслвркмдпыубяьгзчйжхшюцэщфёъ"
 
-[lenghts.prefix]
-start=1
-end=4
+[lenghts]
+prefix = { start = 1, end = 4 }
+root = { start = 1, end = 8 }
+suffix = { start = 1, end = 4 }
+ending = { start = 0, end = 2 }
+postfix = { start = 0, end = 0 }
 
-[lenghts.root]
-start=1
-end=8
-
-[lenghts.suffix]
-start=1
-end=4
-
-[lenghts.ending]
-start=0
-end=2
-
-[lenghts.postfix]
-start=0
-end=0
+[morphems]
+probabilities = {
+	prefix = 0.4,
+	suffix = 0.6,
+	ending = 0.5,
+	postfix = 0.02,
+}

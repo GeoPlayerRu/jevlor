@@ -28,6 +28,7 @@ use serde::{Deserialize, Serialize};
 pub(crate) struct LanguageStatisticsPrototype {
     pub letters: BTreeMap<MorphemType, LetterStatistics>,
     pub lenghts: BTreeMap<MorphemType, Range<u8>>,
+    pub morphems: crate::language::statistics::MorphemData,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

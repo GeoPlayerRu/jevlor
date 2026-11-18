@@ -25,6 +25,20 @@ use crate::language::Language;
 use crate::morphem::{Morphem, MorphemType};
 use crate::word::Word;
 
+#[inline(always)]
+pub fn fill_vec_with_gen<G: Iterator<Item = Morphem>, R: RngExt>(
+    target: &mut Vec<Morphem>,
+    generator: &mut G,
+    rng: &mut R,
+    probability: f64,
+) {
+    let mut p = probability;
+    while rng.random_bool(p) {
+        target.push(generator.next().unwrap());
+        p *= probability;
+    }
+}
+
 /// Generator that uses different types of morphem generators to create words.
 pub struct HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
 where
@@ -44,7 +58,8 @@ where
     rng: R,
 }
 
-impl<'a, Prefix, Root, Suffix, Ending, Postfix> HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, ThreadRng>
+impl<'a, Prefix, Root, Suffix, Ending, Postfix>
+    HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, ThreadRng>
 where
     Prefix: MorphemGenerator<'a>,
     Root: MorphemGenerator<'a>,
@@ -66,7 +81,8 @@ where
     }
 }
 
-impl<'a, Prefix, Root, Suffix, Ending, Postfix, R> HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
+impl<'a, Prefix, Root, Suffix, Ending, Postfix, R>
+    HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
 where
     Prefix: CustomMorphemGenerator<'a, R>,
     Root: CustomMorphemGenerator<'a, R>,
@@ -89,7 +105,8 @@ where
     }
 }
 
-impl<'a, Prefix, Root, Suffix, Ending, Postfix, R> Iterator for HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
+impl<'a, Prefix, Root, Suffix, Ending, Postfix, R> Iterator
+    for HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
 where
     Prefix: Iterator<Item = Morphem>,
     Root: Iterator<Item = Morphem>,
@@ -103,19 +120,33 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         let mut word = Word::new();
 
-        if self.rng.random_bool(0.5) {
-            word.prefixes = vec![self.prefix_generator.next().unwrap()];
-        }
+        fill_vec_with_gen(
+            &mut word.prefixes,
+            &mut self.prefix_generator,
+            &mut self.rng,
+            self.lang.stats.morhem_data.probabilities[&MorphemType::Prefix],
+        );
 
         word.roots = vec![self.root_generator.next().unwrap()];
 
-        if self.rng.random_bool(0.5) {
-            word.suffixes = vec![self.suffix_generator.next().unwrap()];
-        }
-        if self.rng.random_bool(0.5) {
+        fill_vec_with_gen(
+            &mut word.suffixes,
+            &mut self.suffix_generator,
+            &mut self.rng,
+            self.lang.stats.morhem_data.probabilities[&MorphemType::Suffix],
+        );
+
+        if self
+            .rng
+            .random_bool(self.lang.stats.morhem_data.probabilities[&MorphemType::Ending])
+        {
             word.ending = Some(self.ending_generator.next().unwrap());
         }
-        if self.rng.random_bool(0.5) {
+
+        if self
+            .rng
+            .random_bool(self.lang.stats.morhem_data.probabilities[&MorphemType::Postfix])
+        {
             word.postfix = Some(self.postfix_generator.next().unwrap());
         }
 
