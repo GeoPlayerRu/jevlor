@@ -128,6 +128,12 @@ where
         );
 
         word.roots = vec![self.root_generator.next().unwrap()];
+        fill_vec_with_gen(
+            &mut word.roots,
+            &mut self.root_generator,
+            &mut self.rng,
+            self.lang.stats.morhem_data.probabilities[&MorphemType::Root],
+        );
 
         fill_vec_with_gen(
             &mut word.suffixes,

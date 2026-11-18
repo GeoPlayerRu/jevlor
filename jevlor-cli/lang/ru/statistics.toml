@@ -12,6 +12,7 @@ postfix = { start = 0, end = 0 }
 [morphems]
 probabilities = {
 	prefix = 0.4,
+	root = 0.2,
 	suffix = 0.6,
 	ending = 0.5,
 	postfix = 0.02,
