@@ -25,7 +25,7 @@ use std::path::Path;
 
 // Separate function for easier migration
 fn print_notice() {
-    println!(
+    eprintln!(
         "
     jevlor  Copyright (C) 2026  Fedor Veselov
     This program comes with ABSOLUTELY NO WARRANTY.
