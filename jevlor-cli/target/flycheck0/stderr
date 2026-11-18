@@ -1,0 +1,4 @@
+    Checking jevlor-cli v0.1.0 (/home/rendo/Projects/jevlor/jevlor-cli)
+error: could not compile `jevlor-cli` (bin "jevlor-cli" test) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `jevlor-cli` (bin "jevlor-cli") due to 3 previous errors
