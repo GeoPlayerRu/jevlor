@@ -2,6 +2,22 @@
 type="ranked"
 value="оеатсинслвркмдпыубяьгзчйжхшюцэщфёъ"
 
-[lenghts.all]
-start=2
-end=10
+[lenghts.prefix]
+start=1
+end=4
+
+[lenghts.root]
+start=1
+end=8
+
+[lenghts.suffix]
+start=1
+end=4
+
+[lenghts.ending]
+start=0
+end=2
+
+[lenghts.postfix]
+start=0
+end=0
