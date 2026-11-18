@@ -30,9 +30,9 @@ pub mod loader;
 /// Structs for serializing and deserializing statistic structures.
 pub mod statistics;
 
-const ALPHABET_LOOKUP_FILE: &'static str = "alphabet.toml";
-const LANGUAGE_LOOKUP_FILE: &'static str = "rules.toml";
-const STATISTICS_LOOKUP_FILE: &'static str = "statistics.toml";
+const ALPHABET_LOOKUP_FILE: &str = "alphabet.toml";
+const LANGUAGE_LOOKUP_FILE: &str = "rules.toml";
+const STATISTICS_LOOKUP_FILE: &str = "statistics.toml";
 
 /// Loads language from desired directory
 pub fn load_language<P: AsRef<Path>>(path: P) -> Result<Language, anyhow::Error> {
@@ -40,12 +40,12 @@ pub fn load_language<P: AsRef<Path>>(path: P) -> Result<Language, anyhow::Error>
     let mut lang_prot =
         language::LanguagePrototype::from_toml_file(path.join(LANGUAGE_LOOKUP_FILE))?;
 
-    if let None = lang_prot.alphabet {
+    if lang_prot.alphabet.is_none() {
         let alphabet = Alphabet::from_toml_file(path.join(ALPHABET_LOOKUP_FILE))?;
         lang_prot.alphabet = Some(alphabet);
     }
 
-    if let None = lang_prot.stats {
+    if lang_prot.stats.is_none() {
         let stats = Statistics::from_toml_file(path.join(STATISTICS_LOOKUP_FILE))?;
         lang_prot.stats = Some(stats);
     }

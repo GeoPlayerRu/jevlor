@@ -48,12 +48,12 @@ impl Alphabet {
 
     /// Get vowels as vec of [char].
     pub fn get_vowels(&self) -> Vec<char> {
-        self.vowels.iter().copied().collect()
+        self.vowels.to_vec()
     }
 
     /// Get consonants as vec of [UlPair].
     pub fn get_consonants(&self) -> Vec<char> {
-        self.consonants.iter().copied().collect()
+        self.consonants.to_vec()
     }
 
     /// Checks whether alphabet considers char a vowel.

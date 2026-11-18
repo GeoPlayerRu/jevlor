@@ -62,7 +62,8 @@ impl<'a, 'b, R: RngExt> Iterator for SyllableGenerator<'a, 'b, R> {
                 .stats
                 .weights
                 .iter()
-                .filter_map(|(ch, v)| self.lang.alphabet.is_vowel(*ch).then(|| (*ch, *v)))
+                .filter(|&(ch, _)| self.lang.alphabet.is_vowel(*ch))
+                .map(|(ch, v)| (*ch, *v))
                 .collect();
 
             let mut result_dec = VecDeque::new();
@@ -81,7 +82,7 @@ impl<'a, 'b, R: RngExt> Iterator for SyllableGenerator<'a, 'b, R> {
             .stats
             .weights
             .iter()
-            .filter_map(|(k, v)| self.lang.alphabet.is_consonant(*k).then(|| (*k, *v)))
+            .filter_map(|(k, v)| self.lang.alphabet.is_consonant(*k).then_some((*k, *v)))
             .collect();
 
         // Add consonants at the beginning

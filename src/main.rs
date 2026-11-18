@@ -44,8 +44,13 @@ fn main() {
 
     let lang = load_language(working_directory).unwrap();
 
-    let word_gen: HomogenousWordGenerator<'_, StatisticalMorphemGenerator<'_, _>, _> = HomogenousWordGenerator::new(&lang);
+    let word_gen: HomogenousWordGenerator<'_, StatisticalMorphemGenerator<'_, _>, _> =
+        HomogenousWordGenerator::new(&lang);
     for morphem in word_gen.take(10) {
-        println!("Слово: {}, разбор: {:?}", morphem, morphem.into_morphems_hashmap());
+        println!(
+            "Слово: {}, разбор: {:?}",
+            morphem,
+            morphem.into_morphems_hashmap()
+        );
     }
 }

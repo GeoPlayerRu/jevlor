@@ -70,35 +70,22 @@ impl Word {
     pub fn from_morphem_hashmap(map: BTreeMap<MorphemType, Vec<String>>) -> WordWithLabel {
         let mut morphem_map: BTreeMap<MorphemType, Vec<Morphem>> = map
             .into_iter()
-            .map(|(k, v)| {
-                (
-                    k,
-                    v.into_iter()
-                        .map(|ms| Morphem::new(ms, k.clone()))
-                        .collect(),
-                )
-            })
+            .map(|(k, v)| (k, v.into_iter().map(|ms| Morphem::new(ms, k)).collect()))
             .collect();
 
         let result = Self {
-            prefixes: morphem_map
-                .remove(&MorphemType::Prefix)
-                .unwrap_or(Vec::new()),
-            roots: morphem_map.remove(&MorphemType::Root).unwrap_or(Vec::new()),
-            suffixes: morphem_map
-                .remove(&MorphemType::Suffix)
-                .unwrap_or(Vec::new()),
+            prefixes: morphem_map.remove(&MorphemType::Prefix).unwrap_or_default(),
+            roots: morphem_map.remove(&MorphemType::Root).unwrap_or_default(),
+            suffixes: morphem_map.remove(&MorphemType::Suffix).unwrap_or_default(),
             ending: morphem_map
                 .remove(&MorphemType::Ending)
-                .map(|v| v.into_iter().next())
-                .flatten(),
+                .and_then(|v| v.into_iter().next()),
             postfix: morphem_map
                 .remove(&MorphemType::Postfix)
-                .map(|v| v.into_iter().next())
-                .flatten(),
+                .and_then(|v| v.into_iter().next()),
         };
 
-        if result.roots.len() < 1 {
+        if result.roots.is_empty() {
             return WordWithLabel::Invalid(result);
         }
 
@@ -108,13 +95,7 @@ impl Word {
     /// Tries to parse vector of morphems into word. Returns [WordWithLabel::Invalid] if there are no roots in resulting
     /// word.
     pub fn from_morphem_vec(vec: Vec<Morphem>) -> WordWithLabel {
-        let mut result: Self = Self {
-            prefixes: vec![],
-            roots: vec![],
-            suffixes: vec![],
-            ending: None,
-            postfix: None,
-        };
+        let mut result: Self = Self::new();
 
         for m in vec {
             match m.kind() {
@@ -127,7 +108,7 @@ impl Word {
             }
         }
 
-        if result.roots.len() < 1 {
+        if result.roots.is_empty() {
             return WordWithLabel::Invalid(result);
         }
 
@@ -208,5 +189,11 @@ impl Display for Word {
             postfix.fmt(f)?
         }
         Ok(())
+    }
+}
+
+impl Default for Word {
+    fn default() -> Self {
+        Self::new()
     }
 }

@@ -18,7 +18,10 @@
 //
 
 /// Test that syllable generator does not fail and generates syllables correctly.
-use jevlor::{generator::morphem::{CustomMorphemGenerator, StatisticalMorphemGenerator}, serde::load_language};
+use jevlor::{
+    generator::morphem::{CustomMorphemGenerator, StatisticalMorphemGenerator},
+    serde::load_language,
+};
 use rand::{SeedableRng, rngs::StdRng};
 
 const TEST_SEED: u64 = 214151;

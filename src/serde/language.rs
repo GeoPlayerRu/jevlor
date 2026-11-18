@@ -53,9 +53,9 @@ pub(crate) struct ConcatRulePrototype {
     pub rule: MorphemConcatRulePrototype,
 }
 
-impl Into<MorphemConcatRule> for MorphemConcatRulePrototype {
-    fn into(self) -> MorphemConcatRule {
-        match self {
+impl From<MorphemConcatRulePrototype> for MorphemConcatRule {
+    fn from(val: MorphemConcatRulePrototype) -> Self {
+        match val {
             MorphemConcatRulePrototype::Concat => MorphemConcatRule::Concat,
             MorphemConcatRulePrototype::Bridge { value } => MorphemConcatRule::Bridge(value),
             MorphemConcatRulePrototype::Eliminate => MorphemConcatRule::Eliminate,
