@@ -23,7 +23,7 @@ use crate::{
     language::statistics::MorphemStatistics,
     morphem::{Morphem, MorphemType},
 };
-use rand::{RngExt, SeedableRng, rng, rngs::ThreadRng};
+use rand::{RngExt, SeedableRng, rng, rngs::ThreadRng, seq::IndexedRandom};
 
 pub struct StatisticalMorphemGenerator<'a, R: RngExt> {
     stats: MorphemStatistics,
@@ -33,9 +33,9 @@ pub struct StatisticalMorphemGenerator<'a, R: RngExt> {
 }
 
 impl<'a> StatisticalMorphemGenerator<'a, ThreadRng> {
-    pub fn new(stats: MorphemStatistics, morphem: MorphemType, lang: &'a Language) -> Self {
+    pub fn new(lang: &'a Language, morphem: MorphemType) -> Self {
         Self {
-            stats,
+            stats: lang.stats.morphem(&morphem),
             lang,
             rng: rng(),
             morphem,
@@ -44,14 +44,9 @@ impl<'a> StatisticalMorphemGenerator<'a, ThreadRng> {
 }
 
 impl<'a, R: RngExt> StatisticalMorphemGenerator<'a, R> {
-    pub fn create(
-        stats: MorphemStatistics,
-        lang: &'a Language,
-        rng: R,
-        morphem: MorphemType,
-    ) -> Self {
+    pub fn create(lang: &'a Language, rng: R, morphem: MorphemType) -> Self {
         Self {
-            stats,
+            stats: lang.stats.morphem(&morphem),
             lang,
             rng,
             morphem,
@@ -69,20 +64,46 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
     type Item = Morphem;
 
     fn next(&mut self) -> Option<Self::Item> {
+        let mut result_string = String::new();
         let len: usize = self
             .rng
             .random_range(self.stats.lenghts.start..=self.stats.lenghts.end)
             as usize;
 
-        let mut result_string = String::new();
-        result_string.reserve(len as usize);
-
-        let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
-        sylgen.restrict_len((len - result_string.len()) as u8);
-        while result_string.len() < len {
-            result_string.push_str(&sylgen.next().unwrap());
+        result_string.reserve(len);
+        match self.morphem {
+            MorphemType::Prefix => todo!(),
+            MorphemType::Root => {
+                let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
+                let mut count = 0;
+                while count < len {
+                    sylgen.restrict_len((len - count) as u8);
+                    let syllable = sylgen.next().unwrap();
+                    result_string.push_str(&syllable);
+                    count += syllable.chars().count();
+                }
+            }
+            MorphemType::Suffix => {
+                let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
+                sylgen.restrict_len((len - result_string.len()) as u8);
+                result_string.push_str(&sylgen.next().unwrap());
+            }
+            MorphemType::Ending => {
+                let choose_vec: Vec<(&char, &f64)> = self.stats.weights.iter().collect();
+                for _ in 0..len {
+                    result_string.push(
+                        *choose_vec
+                            .choose_weighted(&mut self.rng, |v| v.1)
+                            .unwrap()
+                            .0,
+                    );
+                }
+            }
+            MorphemType::Postfix => {}
+            MorphemType::All => {
+                return None; // You cannot iterate over all morphems at the same time.
+            }
         }
-
         Some(Morphem::new(result_string, self.morphem))
     }
 }

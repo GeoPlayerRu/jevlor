@@ -44,12 +44,8 @@ fn main() {
 
     let lang = load_language(working_directory).unwrap();
 
-    let stat_gen = StatisticalMorphemGenerator::new(
-        lang.stats.morphem(&MorphemType::Root),
-        MorphemType::Root,
-        &lang,
-    );
+    let stat_gen = StatisticalMorphemGenerator::new(&lang, MorphemType::Root);
     for morphem in stat_gen.take(10) {
-        println!("{}", morphem);
+        println!("{} - {}", morphem, morphem.chars().count());
     }
 }

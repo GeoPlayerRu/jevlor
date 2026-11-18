@@ -27,7 +27,6 @@ const TEST_SEED: u64 = 214151;
 fn test_singular_generation() {
     let lang = load_language("lang/ru").unwrap();
     let mut morphgen = StatisticalMorphemGenerator::create(
-        lang.stats.morphem(&jevlor::morphem::MorphemType::Root),
         &lang,
         StdRng::seed_from_u64(TEST_SEED),
         jevlor::morphem::MorphemType::Root,
@@ -38,5 +37,4 @@ fn test_singular_generation() {
 
 /// Test that syllable generator correctly generates 100 syllables.
 #[test]
-fn test_multiple_generation() {
-}
+fn test_multiple_generation() {}
