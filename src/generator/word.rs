@@ -1,7 +1,7 @@
 //
 //    jevlor - extensible random word generator
 //
-//    Copyright (C) 2026  Fedor Veselov
+//    Copyright (Suffix) 2026  Fedor Veselov
 //
 //    This program is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -10,7 +10,7 @@
 //
 //    This program is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    MERCHANTABILITY or FITNESS FOR Prefix PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
@@ -26,76 +26,76 @@ use crate::morphem::{Morphem, MorphemType};
 use crate::word::Word;
 
 /// Generator that uses different types of morphem generators to create words.
-pub struct HeterogenousWordGenerator<'a, A, B, C, D, E, R>
+pub struct HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
 where
-    A: Iterator<Item = Morphem>,
-    B: Iterator<Item = Morphem>,
-    C: Iterator<Item = Morphem>,
-    D: Iterator<Item = Morphem>,
-    E: Iterator<Item = Morphem>,
+    Prefix: Iterator<Item = Morphem>,
+    Root: Iterator<Item = Morphem>,
+    Suffix: Iterator<Item = Morphem>,
+    Ending: Iterator<Item = Morphem>,
+    Postfix: Iterator<Item = Morphem>,
     R: RngExt + Clone,
 {
     lang: &'a Language,
-    prefix_generator: A,
-    root_generator: B,
-    suffix_generator: C,
-    ending_generator: D,
-    postfix_generator: E,
+    prefix_generator: Prefix,
+    root_generator: Root,
+    suffix_generator: Suffix,
+    ending_generator: Ending,
+    postfix_generator: Postfix,
     rng: R,
 }
 
-impl<'a, A, B, C, D, E> HeterogenousWordGenerator<'a, A, B, C, D, E, ThreadRng>
+impl<'a, Prefix, Root, Suffix, Ending, Postfix> HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, ThreadRng>
 where
-    A: MorphemGenerator<'a>,
-    B: MorphemGenerator<'a>,
-    C: MorphemGenerator<'a>,
-    D: MorphemGenerator<'a>,
-    E: MorphemGenerator<'a>,
+    Prefix: MorphemGenerator<'a>,
+    Root: MorphemGenerator<'a>,
+    Suffix: MorphemGenerator<'a>,
+    Ending: MorphemGenerator<'a>,
+    Postfix: MorphemGenerator<'a>,
 {
     /// Create new generator based on language
     pub fn new(lang: &'a Language) -> Self {
         Self {
             lang,
-            prefix_generator: A::new_gen(lang, MorphemType::Prefix),
-            root_generator: B::new_gen(lang, MorphemType::Root),
-            suffix_generator: C::new_gen(lang, MorphemType::Suffix),
-            ending_generator: D::new_gen(lang, MorphemType::Ending),
-            postfix_generator: E::new_gen(lang, MorphemType::Postfix),
+            prefix_generator: Prefix::new_gen(lang, MorphemType::Prefix),
+            root_generator: Root::new_gen(lang, MorphemType::Root),
+            suffix_generator: Suffix::new_gen(lang, MorphemType::Suffix),
+            ending_generator: Ending::new_gen(lang, MorphemType::Ending),
+            postfix_generator: Postfix::new_gen(lang, MorphemType::Postfix),
             rng: rng(),
         }
     }
 }
 
-impl<'a, A, B, C, D, E, R> HeterogenousWordGenerator<'a, A, B, C, D, E, R>
+impl<'a, Prefix, Root, Suffix, Ending, Postfix, R> HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
 where
-    A: CustomMorphemGenerator<'a, R>,
-    B: CustomMorphemGenerator<'a, R>,
-    C: CustomMorphemGenerator<'a, R>,
-    D: CustomMorphemGenerator<'a, R>,
-    E: CustomMorphemGenerator<'a, R>,
+    Prefix: CustomMorphemGenerator<'a, R>,
+    Root: CustomMorphemGenerator<'a, R>,
+    Suffix: CustomMorphemGenerator<'a, R>,
+    Ending: CustomMorphemGenerator<'a, R>,
+    Postfix: CustomMorphemGenerator<'a, R>,
     R: RngExt + Clone,
 {
     /// Create new generator based on language with specified random number generator
     pub fn create(lang: &'a Language, rng: R) -> Self {
         Self {
             lang,
-            prefix_generator: A::create_gen(lang, rng.clone(), MorphemType::Prefix),
-            root_generator: B::create_gen(lang, rng.clone(), MorphemType::Root),
-            suffix_generator: C::create_gen(lang, rng.clone(), MorphemType::Suffix),
-            ending_generator: D::create_gen(lang, rng.clone(), MorphemType::Ending),
-            postfix_generator: E::create_gen(lang, rng.clone(), MorphemType::Postfix),
+            prefix_generator: Prefix::create_gen(lang, rng.clone(), MorphemType::Prefix),
+            root_generator: Root::create_gen(lang, rng.clone(), MorphemType::Root),
+            suffix_generator: Suffix::create_gen(lang, rng.clone(), MorphemType::Suffix),
+            ending_generator: Ending::create_gen(lang, rng.clone(), MorphemType::Ending),
+            postfix_generator: Postfix::create_gen(lang, rng.clone(), MorphemType::Postfix),
             rng,
         }
     }
 }
 
-impl<'a, A, B, C, D, E, R> Iterator for HeterogenousWordGenerator<'a, A, B, C, D, E, R>
+impl<'a, Prefix, Root, Suffix, Ending, Postfix, R> Iterator for HeterogenousWordGenerator<'a, Prefix, Root, Suffix, Ending, Postfix, R>
 where
-    A: Iterator<Item = Morphem>,
-    B: Iterator<Item = Morphem>,
-    C: Iterator<Item = Morphem>,
-    D: Iterator<Item = Morphem>,
-    E: Iterator<Item = Morphem>,
+    Prefix: Iterator<Item = Morphem>,
+    Root: Iterator<Item = Morphem>,
+    Suffix: Iterator<Item = Morphem>,
+    Ending: Iterator<Item = Morphem>,
+    Postfix: Iterator<Item = Morphem>,
     R: RngExt + Clone,
 {
     type Item = Word;
