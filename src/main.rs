@@ -46,6 +46,6 @@ fn main() {
 
     let stat_gen = StatisticalMorphemGenerator::new(&lang, MorphemType::Root);
     for morphem in stat_gen.take(10) {
-        println!("{} - {}", morphem, morphem.chars().count());
+        println!("{}", morphem);
     }
 }

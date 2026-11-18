@@ -72,7 +72,17 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
 
         result_string.reserve(len);
         match self.morphem {
-            MorphemType::Prefix => todo!(),
+            MorphemType::Prefix => {
+                let choose_vec: Vec<(&char, &f64)> = self.stats.weights.iter().collect();
+                for _ in 0..len {
+                    result_string.push(
+                        *choose_vec
+                            .choose_weighted(&mut self.rng, |v| v.1)
+                            .unwrap()
+                            .0,
+                    );
+                } 
+            },
             MorphemType::Root => {
                 let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
                 let mut count = 0;
@@ -85,11 +95,11 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
             }
             MorphemType::Suffix => {
                 let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
-                sylgen.restrict_len((len - result_string.len()) as u8);
+                sylgen.restrict_len(len as u8);
                 result_string.push_str(&sylgen.next().unwrap());
             }
             MorphemType::Ending => {
-                let choose_vec: Vec<(&char, &f64)> = self.stats.weights.iter().collect();
+                let choose_vec: Vec<(&char, &f64)> = self.stats.weights.iter().filter(|v| self.lang.alphabet.is_vowel(*v.0)).collect();
                 for _ in 0..len {
                     result_string.push(
                         *choose_vec
