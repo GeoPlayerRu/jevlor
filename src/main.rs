@@ -18,7 +18,7 @@
 //
 
 use jevlor::generator::morphem::StatisticalMorphemGenerator;
-use jevlor::morphem::MorphemType;
+use jevlor::generator::word::HomogenousWordGenerator;
 use jevlor::serde::load_language;
 
 use std::path::Path;
@@ -44,8 +44,8 @@ fn main() {
 
     let lang = load_language(working_directory).unwrap();
 
-    let stat_gen = StatisticalMorphemGenerator::new(&lang, MorphemType::Root);
-    for morphem in stat_gen.take(10) {
-        println!("{}", morphem);
+    let word_gen: HomogenousWordGenerator<'_, StatisticalMorphemGenerator<'_, _>, _> = HomogenousWordGenerator::new(&lang);
+    for morphem in word_gen.take(10) {
+        println!("Слово: {}, разбор: {:?}", morphem, morphem.into_morphems_hashmap());
     }
 }

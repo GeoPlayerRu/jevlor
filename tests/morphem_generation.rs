@@ -18,7 +18,7 @@
 //
 
 /// Test that syllable generator does not fail and generates syllables correctly.
-use jevlor::{generator::morphem::StatisticalMorphemGenerator, serde::load_language};
+use jevlor::{generator::morphem::{CustomMorphemGenerator, StatisticalMorphemGenerator}, serde::load_language};
 use rand::{SeedableRng, rngs::StdRng};
 
 const TEST_SEED: u64 = 214151;
@@ -26,7 +26,7 @@ const TEST_SEED: u64 = 214151;
 #[test]
 fn test_singular_generation() {
     let lang = load_language("lang/ru").unwrap();
-    let mut morphgen = StatisticalMorphemGenerator::create(
+    let mut morphgen = StatisticalMorphemGenerator::create_gen(
         &lang,
         StdRng::seed_from_u64(TEST_SEED),
         jevlor::morphem::MorphemType::Root,

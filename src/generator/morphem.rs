@@ -32,8 +32,19 @@ pub struct StatisticalMorphemGenerator<'a, R: RngExt> {
     morphem: MorphemType,
 }
 
-impl<'a> StatisticalMorphemGenerator<'a, ThreadRng> {
-    pub fn new(lang: &'a Language, morphem: MorphemType) -> Self {
+pub trait MorphemGenerator<'a>: Iterator<Item = Morphem> {
+    fn new_gen(lang: &'a Language, morphem: MorphemType) -> Self;
+}
+
+pub trait CustomMorphemGenerator<'a, R>: Iterator<Item = Morphem>
+where
+    R: RngExt,
+{
+    fn create_gen(lang: &'a Language, rng: R, morphem: MorphemType) -> Self;
+}
+
+impl<'a> MorphemGenerator<'a> for StatisticalMorphemGenerator<'a, ThreadRng> {
+    fn new_gen(lang: &'a Language, morphem: MorphemType) -> Self {
         Self {
             stats: lang.stats.morphem(&morphem),
             lang,
@@ -43,8 +54,8 @@ impl<'a> StatisticalMorphemGenerator<'a, ThreadRng> {
     }
 }
 
-impl<'a, R: RngExt> StatisticalMorphemGenerator<'a, R> {
-    pub fn create(lang: &'a Language, rng: R, morphem: MorphemType) -> Self {
+impl<'a, R: RngExt> CustomMorphemGenerator<'a, R> for StatisticalMorphemGenerator<'a, R> {
+    fn create_gen(lang: &'a Language, rng: R, morphem: MorphemType) -> Self {
         Self {
             stats: lang.stats.morphem(&morphem),
             lang,
@@ -81,8 +92,8 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
                             .unwrap()
                             .0,
                     );
-                } 
-            },
+                }
+            }
             MorphemType::Root => {
                 let mut sylgen = SyllableGenerator::new(&self.stats, &mut self.rng, self.lang);
                 let mut count = 0;
@@ -99,7 +110,12 @@ impl<'a, R: RngExt> Iterator for StatisticalMorphemGenerator<'a, R> {
                 result_string.push_str(&sylgen.next().unwrap());
             }
             MorphemType::Ending => {
-                let choose_vec: Vec<(&char, &f64)> = self.stats.weights.iter().filter(|v| self.lang.alphabet.is_vowel(*v.0)).collect();
+                let choose_vec: Vec<(&char, &f64)> = self
+                    .stats
+                    .weights
+                    .iter()
+                    .filter(|v| self.lang.alphabet.is_vowel(*v.0))
+                    .collect();
                 for _ in 0..len {
                     result_string.push(
                         *choose_vec
