@@ -12,7 +12,3 @@ rand = "0.10.3"
 serde = { version = "1.0.229", features = ["derive"] }
 toml = "1.2.0"
 
-[[bin]]
-name = "jevlor-cli"
-path = "jevlor-cli/src/main.rs"
-
