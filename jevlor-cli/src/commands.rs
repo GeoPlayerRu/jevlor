@@ -37,9 +37,9 @@ pub enum Commands {
         ///
         /// $HOME/config/jevlor/lang/default
         ///
-        /// ./jevlor/languages/default
+        /// ./languages/default
         ///
-        /// ./jevlor/lang/default
+        /// ./lang/default
         path: Option<PathBuf>,
 
         /// Prints morphems of word right after word
