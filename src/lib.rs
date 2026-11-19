@@ -30,4 +30,5 @@ pub mod generator;
 pub mod language;
 
 /// Contains modules and structures that are used for deserializing [language] structures.
+#[cfg(feature = "serde")]
 pub mod serde;

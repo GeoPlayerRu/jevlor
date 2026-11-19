@@ -32,13 +32,10 @@ pub(crate) struct LanguageStatisticsPrototype {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub(crate) struct CharWeightPair(pub char, pub f64);
-
-#[derive(Serialize, Deserialize, Clone)]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub(crate) enum LetterStatistics {
     Ranked { value: String },
-    Weighted { value: Vec<CharWeightPair> },
+    Weighted { value: BTreeMap<char,f64> },
 }
 
 impl LetterStatistics {
