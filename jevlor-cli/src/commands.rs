@@ -16,21 +16,18 @@ pub struct Cli {
 
     /// Path to language directory. Either relative or absolute.
     ///
-    /// If left empty, it will search in directories in order:
+    /// If left empty, it will search for directory 'default' in directories in order listed below.
+    /// If implicitly set, it will search for value in reverse order of a listed below.
     ///
-    /// $JEVLOR_DICT
+    /// Order of search:
+    /// - $JEVLOR_DICT/
+    /// - $XDG_CONFIG_HOME/jevlor/languages/
+    /// - $XDG_CONFIG_HOME/jevlor/lang/
+    /// - $HOME/config/jevlor/languages/
+    /// - $HOME/config/jevlor/lang/
+    /// - ./languages/
+    /// - ./lang/
     ///
-    /// $XDG_CONFIG_HOME/jevlor/languages/default
-    ///
-    /// $XDG_CONFIG_HOME/jevlor/lang/default
-    ///
-    /// $HOME/config/jevlor/languages/default
-    ///
-    /// $HOME/config/jevlor/lang/default
-    ///
-    /// ./languages/default
-    ///
-    /// ./lang/default
     pub path: Option<PathBuf>,
 }
 

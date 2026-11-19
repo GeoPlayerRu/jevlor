@@ -1,17 +1,17 @@
 #[derive(Clone, Debug)]
 pub enum JevlorCliError {
-    Generate(JevlorGenerateError),
+    Load(JevlorLoadError),
 }
 
 #[derive(Clone, Debug)]
-pub enum JevlorGenerateError {
-    UnresolvedDefaultPath,
+pub enum JevlorLoadError {
+    UnresolvedPath,
     InvalidStructure,
 }
 
-impl From<JevlorGenerateError> for JevlorCliError {
-    fn from(value: JevlorGenerateError) -> Self {
-        Self::Generate(value)
+impl From<JevlorLoadError> for JevlorCliError {
+    fn from(value: JevlorLoadError) -> Self {
+        Self::Load(value)
     }
 }
 

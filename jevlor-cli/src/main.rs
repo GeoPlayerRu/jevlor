@@ -66,28 +66,56 @@ fn resolve_paths<P: AsRef<Path>>(lookup: &[P]) -> Result<PathBuf, JevlorCliError
             return Ok(path);
         }
     }
-    Err(JevlorGenerateError::UnresolvedDefaultPath.jevlor_error())
+    Err(JevlorLoadError::UnresolvedPath.jevlor_error())
 }
+
+pub const USER_LOOKUP_PATHS: [&str; 7] = [
+    "./lang/",
+    "./languages/",
+    "HOME/.config/jevlor/lang/",
+    "HOME/.config/jevlor/languages/",
+    "XDG_CONFIG_HOME/jevlor/lang/",
+    "XDG_CONFIG_HOME/jevlor/languages/",
+    "JEVLOR_DICT",
+];
 
 fn main() -> Result<(), JevlorCliError> {
     print_notice();
     let cli = Cli::parse();
 
-    let lang_directory = cli
-        .path
-        .ok_or(JevlorGenerateError::UnresolvedDefaultPath.jevlor_error())
-        .or(resolve_paths(&[
-            "JEVLOR_DICT",
-            "XDG_CONFIG_HOME/jevlor/languages/default",
-            "XDG_CONFIG_HOME/jevlor/lang/default",
-            "HOME/.config/jevlor/languages/default",
-            "HOME/.config/jevlor/lang/default",
-            "./languages/default",
-            "./lang/default",
-        ]))?;
+    let lang_directory = match cli.path {
+        Some(path) => if path.exists() {
+            path
+        } else {
+            resolve_paths(&USER_LOOKUP_PATHS.map(|lookup| format!("{}{}", lookup, path.display())))?
+        }
+        None => {
+            resolve_paths(&[
+                "JEVLOR_DICT",
+                "XDG_CONFIG_HOME/jevlor/languages/default",
+                "XDG_CONFIG_HOME/jevlor/lang/default",
+                "HOME/.config/jevlor/languages/default",
+                "HOME/.config/jevlor/lang/default",
+                "./languages/default",
+                "./lang/default",
+            ])?
+        }
+    };
+    // let lang_directory = cli
+    //     .path
+    //     .ok_or(JevlorLoadError::UnresolvedDefaultPath.jevlor_error())
+    //     .or(resolve_paths(&[
+    //         "JEVLOR_DICT",
+    //         "XDG_CONFIG_HOME/jevlor/languages/default",
+    //         "XDG_CONFIG_HOME/jevlor/lang/default",
+    //         "HOME/.config/jevlor/languages/default",
+    //         "HOME/.config/jevlor/lang/default",
+    //         "./languages/default",
+    //         "./lang/default",
+    //     ]))?;
 
     let Ok(lang) = load_language(lang_directory) else {
-        return Err(JevlorGenerateError::InvalidStructure.jevlor_error());
+        return Err(JevlorLoadError::InvalidStructure.jevlor_error());
     };
 
     match cli.command {
