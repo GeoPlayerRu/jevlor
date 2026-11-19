@@ -35,12 +35,10 @@ pub mod format;
 // Separate function for easier migration
 fn print_notice() {
     eprintln!(
-        "
-    jevlor  Copyright (C) 2026  Fedor Veselov
+        "jevlor  Copyright (C) 2026  Fedor Veselov
     This program comes with ABSOLUTELY NO WARRANTY.
     This is free software, and you are welcome to redistribute it
-    under certain conditions.
-    "
+    under certain conditions."
     );
 }
 
@@ -62,43 +60,41 @@ fn expand(path: &Path) -> PathBuf {
 }
 
 fn resolve_paths<P: AsRef<Path>>(lookup: &[P]) -> Result<PathBuf, JevlorCliError> {
-    for lookup_path in lookup.into_iter() {
+    for lookup_path in lookup.iter() {
         let path = expand(lookup_path.as_ref());
         if path.exists() {
             return Ok(path);
         }
     }
-    Err(JevlorCliError::Generate(
-        JevlorGenerateError::UnresolvedDefaultPath,
-    ))
+    Err(JevlorGenerateError::UnresolvedDefaultPath.jevlor_error())
 }
 
 fn main() -> Result<(), JevlorCliError> {
     print_notice();
     let cli = Cli::parse();
 
+    let lang_directory = cli
+        .path
+        .ok_or(JevlorGenerateError::UnresolvedDefaultPath.jevlor_error())
+        .or(resolve_paths(&[
+            "JEVLOR_DICT",
+            "XDG_CONFIG_HOME/jevlor/languages/default",
+            "XDG_CONFIG_HOME/jevlor/lang/default",
+            "HOME/.config/jevlor/languages/default",
+            "HOME/.config/jevlor/lang/default",
+            "./languages/default",
+            "./lang/default",
+        ]))?;
+
+    let Ok(lang) = load_language(lang_directory) else {
+        return Err(JevlorGenerateError::InvalidStructure.jevlor_error());
+    };
+
     match cli.command {
-        commands::Commands::Generate {
-            path: working_directory,
+        commands::Commands::Words {
             amount,
-            morphems,
+            split_moprhems: morphems,
         } => {
-            let lang_directory = working_directory
-                .ok_or(JevlorCliError::Generate(
-                    JevlorGenerateError::UnresolvedDefaultPath,
-                ))
-                .or(resolve_paths(&[
-                    "JEVLOR_DICT",
-                    "XDG_CONFIG_HOME/jevlor/languages/default",
-                    "XDG_CONFIG_HOME/jevlor/lang/default",
-                    "HOME/.config/jevlor/languages/default",
-                    "HOME/.config/jevlor/lang/default",
-                    "./languages/default",
-                    "./lang/default",
-                ]))?;
-
-            let lang = load_language(lang_directory).unwrap();
-
             let word_gen: HomogenousWordGenerator<'_, StatisticalMorphemGenerator<'_, _>, _> =
                 HomogenousWordGenerator::new(&lang);
             for word in word_gen.take(amount) {

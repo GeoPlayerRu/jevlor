@@ -13,34 +13,34 @@ fn about_commands() -> String {
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
+
+    /// Path to language directory. Either relative or absolute.
+    ///
+    /// If left empty, it will search in directories in order:
+    ///
+    /// $JEVLOR_DICT
+    ///
+    /// $XDG_CONFIG_HOME/jevlor/languages/default
+    ///
+    /// $XDG_CONFIG_HOME/jevlor/lang/default
+    ///
+    /// $HOME/config/jevlor/languages/default
+    ///
+    /// $HOME/config/jevlor/lang/default
+    ///
+    /// ./languages/default
+    ///
+    /// ./lang/default
+    pub path: Option<PathBuf>,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
     /// Start process of word generation.
-    Generate {
+    Words {
         /// Amount of words to generate
         #[arg(default_value_t = 10)]
         amount: usize,
-
-        /// Path to language directory. Either relative or absolute.
-        ///
-        /// If left empty, it will search in directories in order:
-        ///
-        /// $JEVLOR_DICT
-        ///
-        /// $XDG_CONFIG_HOME/jevlor/languages/default
-        ///
-        /// $XDG_CONFIG_HOME/jevlor/lang/default
-        ///
-        /// $HOME/config/jevlor/languages/default
-        ///
-        /// $HOME/config/jevlor/lang/default
-        ///
-        /// ./languages/default
-        ///
-        /// ./lang/default
-        path: Option<PathBuf>,
 
         /// Prints morphems of word right after word
         ///
@@ -48,6 +48,6 @@ pub enum Commands {
         ///
         /// Question mark '?' means that entire entry will not appear if morphem does not exist
         #[arg(short, long)]
-        morphems: bool,
+        split_moprhems: bool,
     },
 }
