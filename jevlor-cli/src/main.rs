@@ -21,9 +21,11 @@ use jevlor::generator::morphem::StatisticalMorphemGenerator;
 use jevlor::generator::word::HomogenousWordGenerator;
 use jevlor::serde::load_language;
 
-use std::path::Path;
+use clap::Parser;
+use commands::Cli;
 
 pub mod commands;
+pub mod format;
 
 // Separate function for easier migration
 fn print_notice() {
@@ -39,20 +41,23 @@ fn print_notice() {
 
 fn main() {
     print_notice();
-    let args = std::env::args().collect::<Vec<String>>();
-    let lookup_dir = String::from("lang/ru/");
+    let cli = Cli::parse();
 
-    let working_directory = Path::new(args.get(1).unwrap_or(&lookup_dir));
+    match cli.command {
+        commands::Commands::Generate { path: working_directory, amount, morphems } => {
+            let lang = load_language(working_directory).unwrap();
 
-    let lang = load_language(working_directory).unwrap();
-
-    let word_gen: HomogenousWordGenerator<'_, StatisticalMorphemGenerator<'_, _>, _> =
-        HomogenousWordGenerator::new(&lang);
-    for morphem in word_gen.take(10) {
-        println!(
-            "Слово: {}, разбор: {:?}",
-            morphem,
-            morphem.into_morphems_hashmap()
-        );
+            let word_gen: HomogenousWordGenerator<'_, StatisticalMorphemGenerator<'_, _>, _> =
+                HomogenousWordGenerator::new(&lang);
+            for word in word_gen.take(amount) {
+                println!(
+                    "{}",
+                    word,
+                );
+                if morphems {
+                    println!("{}", format::format_word_morphems(&word));
+                }
+            }
+        },
     }
 }
