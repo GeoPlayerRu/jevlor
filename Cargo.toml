@@ -15,7 +15,4 @@ toml = "1.2.0"
 [[bin]]
 name = "jevlor-cli"
 path = "jevlor-cli/src/main.rs"
-required-features = ["serde"]
 
-[features]
-serde = []
