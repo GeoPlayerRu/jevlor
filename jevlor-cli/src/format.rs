@@ -23,12 +23,12 @@ pub fn format_word_morphems(word: &Word) -> String {
     if let Some(ending) = word_morphems.get(&MorphemType::Ending)
         && !ending.is_empty()
     {
-        result.push(format!("Ending:{}", ending[0]));
+        result.push(format!("Ending:\"{}\"", ending[0]));
     }
     if let Some(postfix) = word_morphems.get(&MorphemType::Postfix)
         && !postfix.is_empty()
     {
-        result.push(format!("Postfix:{}", postfix[0]));
+        result.push(format!("Postfix:\"{}\"", postfix[0]));
     }
 
     result.join(";")
